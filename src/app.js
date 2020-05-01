@@ -43,13 +43,13 @@ app.get('/transfer', (request, response) => {
 app.post('/transfer', (request, response) => {
     let from = request.body["from"];
     let to = request.body["to"];
-    let amt = request.body["amount"];
+    let amt = parseInt(request.body["amount"]);
 
-    accounts[from].balance = accounts[from].balance - parseInt(amt);
-    accounts[to].balance = accounts[to].balance + parseInt(amt);
+    accounts[from].balance -= amt;
+    accounts[to].balance += amt;
 
-    var accountsJSON = JSON.stringify(accounts);
-    fs.writeFileSync(path.join(__dirname, 'json/accounts.json'), accountsJSON, {"encoding":"UTF8"})
+    let accountsJSON = JSON.stringify(accounts, null, 4);
+    fs.writeFileSync(path.join(__dirname, 'json', 'accounts.json'), accountsJSON, "UTF8")
 
     response.render('transfer', { message:"Transfer Completed" });
 });
@@ -61,11 +61,11 @@ app.get('/payment', (request, response) => {
 
 app.post('/payment', (request, response) => {
     let amt = parseInt(request.body.amount)
-    accounts.credit.balance = accounts.credit.balance - amt;
-    accounts.credit.available = accounts.credit.available + amt;
+    accounts.credit.balance -= amt;
+    accounts.credit.available += amt;
 
-    var accountsJSON = JSON.stringify(accounts);
-    fs.writeFileSync(path.join(__dirname, 'json/accounts.json'), accountsJSON, {"encoding":"UTF8"})
+    let accountsJSON = JSON.stringify(accounts, null, 4);
+    fs.writeFileSync(path.join(__dirname, 'json','accounts.json'), accountsJSON, "utf8");
 
     response.render('payment', { message:"Payment Successful", account:accounts.credit });
 });
